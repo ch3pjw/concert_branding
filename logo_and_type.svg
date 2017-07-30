@@ -12,8 +12,6 @@
         @font-face {
           font-family: 'Raleway Concert';
           src:
-            local('Raleway'),
-            local('Raleway-Regular'),
             url(raleway-regular-concert.woff) format('woff');
         }
         svg text {
