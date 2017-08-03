@@ -12,7 +12,7 @@
         @font-face {
           font-family: 'Raleway Concert';
           src:
-            url(raleway-regular-concert.woff) format('woff');
+            url(/static/raleway-medium-concert.woff) format('woff');
         }
         svg text {
           -webkit-user-select: none;
@@ -22,7 +22,7 @@
         }
         .logo_stroke {
           stroke: black;
-          stroke-width: 10;
+          stroke-width: 7;
         }
       ]]>
     </style>
@@ -31,41 +31,42 @@
     </linearGradient>
     <circle
         id="record_symbol"
-        r="23"
+        r="11"
         class="logo_stroke"
         fill="url(#record_red)" />
   </defs>
-  <symbol id="ethernet" viewBox="0 0 140 160">
+  <symbol id="ethernet" viewBox="0 0 70 80">
     <path class="logo_stroke" d="
-      M 5 80
-      h 130
-      m -65 0
-      v -60
-      m -40 60
-      v 60
-      m 80 -60
-      v 60
+      M 2 40
+      h 65
+      m -32 0
+      v -30
+      m -20 30
+      v 30
+      m 40 -30
+      v 30
       " />
-    <use x="70" y="30" href="#record_symbol" />
-    <use x="30" y="130" href="#record_symbol" />
-    <use x="110" y="130" href="#record_symbol" />
+    <use x="35" y="15" href="#record_symbol" />
+    <use x="15" y="65" href="#record_symbol" />
+    <use x="55" y="65" href="#record_symbol" />
   </symbol>
-  <symbol id="logo" viewBox="-10 -10 220 232">
+  <symbol id="logo" viewBox="-5 -5 110 116">
     <rect
-      x="0" y="0" width="200" height="205"
+      x="0" y="0" width="100" height="102"
       class="logo_stroke"
       fill="none"/>
-    <use x="30" y="22" width="140" height="160" href="#ethernet" />
+    <use x="15" y="11" width="70" height="80" href="#ethernet" />
   </symbol>
 
-  <use x="15" y="15" width="84" height="84" href="#logo" />
+  <use x="7" y="7" width="42" height="42" href="#logo" />
   <text
       id="logotype"
-      x="110" y="81"
+      x="55" y="40"
       fill="black"
-      dx="0 2 0 0 0.5 1 3"
+      dx="0 1 2 3 3 3 3"
       font-family="Raleway Concert"
-      font-size="72">
+      font-size="36"
+      font-weight="500">
     Concert
   </text>
 </svg>

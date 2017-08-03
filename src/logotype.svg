@@ -14,7 +14,7 @@
           src:
             local('Raleway'),
             local('Raleway-Regular'),
-            url(raleway-regular-concert.woff) format('woff');
+            url(/static/raleway-regular-concert.woff) format('woff');
         }
         svg text {
           -webkit-user-select: none;
