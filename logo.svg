@@ -2,6 +2,7 @@
 
 <svg
     xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
     version="1.1"
     width="140"
     height="160"
@@ -35,15 +36,17 @@
       m 80 -60
       v 60
       " />
-    <use x="70" y="30" href="#record_symbol" />
-    <use x="30" y="130" href="#record_symbol" />
-    <use x="110" y="130" href="#record_symbol" />
+    <!-- FIXME: xlink:href is deprecated in favour of plain href since SVG 2.0.
+    -->
+    <use x="70" y="30" xlink:href="#record_symbol" />
+    <use x="30" y="130" xlink:href="#record_symbol" />
+    <use x="110" y="130" xlink:href="#record_symbol" />
   </symbol>
   <g id="logo">
     <rect
       x="0" y="0" width="200" height="205"
       class="logo_stroke"
       fill="none"/>
-    <use x="30" y="22" width="140" height="160" href="#ethernet" />
+    <use x="30" y="22" width="140" height="160" xlink:href="#ethernet" />
   </g>
 </svg>
