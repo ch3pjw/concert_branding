@@ -1,7 +1,9 @@
+#!/bin/env python3
 import os
 
 import networkx
 from lxml import etree
+from urllib.parse import urlsplit, urlunsplit, SplitResult
 import re
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -12,11 +14,11 @@ url_re = re.compile('url\((.*)\)')
 def get_element_href(element):
     for name, value in element.attrib.items():
         if name.endswith('href'):
-            yield value
+            yield urlsplit(value)
         else:
             match = url_re.match(value)
             if match:
-                yield match.group(1)
+                yield urlsplit(match.group(1))
 
 
 def get_descendant_hrefs(element):
@@ -25,25 +27,34 @@ def get_descendant_hrefs(element):
         yield from get_element_href(e)
 
 
-def generate_dependency_graph(root):
+def load_all_elements(*paths):
+    elements_by_url = {}
+    for path in paths:
+        root = etree.parse(path).getroot()
+        relpath = os.path.relpath(path, here)
+        for e in root.iterdescendants():
+            if e.get('id'):
+                url = SplitResult('', '', relpath, '', e.get('id'))
+                elements_by_url[url] = e
+    return elements_by_url
+
+
+def generate_dependency_graph(elements_by_url):
+    urls_by_element = {v: k for k, v in elements_by_url.items()}
     g = networkx.DiGraph()
-    elements_by_id = {
-        e.get('id'): e for e in root.iterdescendants() if e.get('id')}
-    g.add_nodes_from(elements_by_id.values())
+    g.add_nodes_from(elements_by_url.values())
     for node in g:
+        node_url = urls_by_element[node]
         for dep_href in get_descendant_hrefs(node):
-            # FIXME: we need to normalise our hrefs and handle cross-file links
-            g.add_edge(elements_by_id[dep_href[1:]], node)
+            if not dep_href.path:
+                dep_href = dep_href._replace(path=node_url.path)
+            g.add_edge(elements_by_url[dep_href], node)
     return g
 
 
-def get_dependencies(dep_graph, elem):
-    pass
-
-
 if __name__ == '__main__':
-    # FIXME: this should handle multiple input files
-    defs = etree.parse(os.path.join(here, '..', 'src', 'defs.svg')).getroot()
-    g = generate_dependency_graph(defs)
+    elements_by_url = load_all_elements(
+        os.path.join(here, '..', 'src', 'defs.svg'))
+    g = generate_dependency_graph(elements_by_url)
     for n in g:
         print(n.get('id'), {x.get('id') for x in networkx.ancestors(g, n)})
