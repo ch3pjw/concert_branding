@@ -35,6 +35,9 @@ def load_all_elements(*paths):
         for e in root.iterdescendants():
             if e.get('id'):
                 url = SplitResult('', '', relpath, '', e.get('id'))
+                if url in elements_by_url:
+                    raise NameError(
+                        'Element {} already exists'.format(urlunsplit(url)))
                 elements_by_url[url] = e
     return elements_by_url
 
