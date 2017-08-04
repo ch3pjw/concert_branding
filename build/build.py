@@ -49,6 +49,7 @@ def generate_dependency_graph(elements_by_url):
             if not dep_href.path:
                 dep_href = dep_href._replace(path=node_url.path)
             g.add_edge(elements_by_url[dep_href], node)
+    assert not tuple(networkx.simple_cycles(g)), 'Dependency cycles!'
     return g
 
 
