@@ -8,26 +8,46 @@ _module = sys.modules[__name__]
 
 
 class Element:
-    def __init__(self, *children, __content__='', **attributes):
-        self.children = children
-        self.content = __content__
-        cls = attributes.pop('cls', None)
-        if cls:
-            attributes['class'] = cls
-        self.attributes = attributes
+    def __init__(self, *children, **attributes):
+        self._children = children
+        self._attributes = attributes
+
+    def __len__(self):
+        return len(self._children)
+
+    def __iter__(self):
+        return iter(self._children)
+
+    def __getitem__(self, idx):
+        return self._children[idx]
+
+    def __getattr__(self, name):
+        return self._attributes[name]
 
     @property
-    def tag(self):
+    def _tag(self):
         n = type(self).__name__
         return n[0].lower() + n[1:]
 
     @property
-    def element(self):
+    def _etree(self):
+        attributes = dict(self._attributes)
+        cls = attributes.pop('cls', None)
+        if cls:
+            attributes['class'] = cls
         e = etree.Element(
-            self.tag,
-            attrib={k: str(v) for k, v in self.attributes.items()})
-        for c in self.children:
-            e.append(c.element)
+            self._tag,
+            attrib={k: str(v) for k, v in attributes.items()})
+        last_child_etree_elem = None
+        for c in self._children:
+            if isinstance(c, str):
+                if last_child_etree_elem is None:
+                    e.text = c
+                else:
+                    last_child_etree_elem.tail = c
+            else:
+                last_child_etree_elem = c._etree
+                e.append(last_child_etree_elem)
         return e
 
 
@@ -159,4 +179,4 @@ if __name__ == '__main__':
             id='logo'
         )
     )
-    print(etree.tostring(s.element))
+    print(etree.tostring(s._etree))
