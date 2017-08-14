@@ -77,7 +77,12 @@ class Style(Element):
 
 
 class Svg(Element):
-    pass
+    def __init__(self, *children, **attributes):
+        super().__init__(
+            *children,
+            xmlns='http://www.w3.org/2000/svg',
+            version='1.1',
+            **attributes)
 
 
 class Symbol(Element):
