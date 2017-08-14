@@ -1,6 +1,7 @@
 import sys
 from collections import namedtuple
 from functools import partial, wraps
+from math import sin, acos
 
 from lxml import etree
 
@@ -147,41 +148,82 @@ for instruction in (MoveTo, LineTo, HorizontalLineTo, VerticalLineTo, ArcTo):
 
 class PathD:
     def __init__(self, inss):
-        self._inss = inss
+        self._inss = tuple(inss)
 
     def __str__(self):
         return '  '.join(map(str, self._inss))
 
 
+ViewBox = namedtuple('ViewBox', ('ox', 'oy', 'width', 'height'))
+ViewBox.__str__ = lambda vb: ' '.join(map(str, vb))
+
+
+def clockwise_square(size, x=0, y=0):
+    return (
+        M(x, y),
+        H(size),
+        V(size),
+        H(x),
+        V(y)
+    )
+
+
+def clockwise_circle(r, cx=0, cy=0):
+    return (
+        M(cx, cy - r),
+        a(r, r, 0, 0, 0, 0, 2 * r),
+        a(r, r, 0, 0, 0, 0, -2 * r)
+    )
+
+
 if __name__ == '__main__':
     s = Svg(
-        Defs(
-            Circle(id='record_symbol')
-        ),
-        Symbol(
-            Path(
-                cls='logo_stroke',
-                d=(
-                    M(5, 80),
-                    h(130),
-                    m(-65, 0),
-                    v(-60),
-                    m(-40, 50),
-                    v(60),
-                    m(80, -60),
-                    v(60)
-                )
-            ),
-            Use(x=70, y=30, href='#record_symbol'),
-            Use(x=30, y=130, href='#record_symbol'),
-            Use(x=110, y=130, href='#record_symbol'),
-            id='ethernet'
-        ),
-        G(
-            Rect(
-                x=0, y=0, width=200, height=205, cls='logo_stroke', fill=None),
-            Use(x=30, y=22, width=140, height=160, href='#ethernet'),
-            id='logo'
+        Path(
+            d=(
+                clockwise_square(32) +
+                (
+                    M(2, 15),
+                    V(17),
+                    H(6),
+                    V(20),
+                    v(-sin(acos(1/10))),
+                    a(5, 5, 0, 1, 0, 2, 0),
+                    V(17),
+                    H(24),
+                    V(20),
+                    v(-sin(acos(1/10))),
+                    a(5, 5, 0, 1, 0, 2, 0),
+                    V(17),
+                    H(30),
+                    V(15),
+                    H(17),
+                    V(12),
+                    v(sin(acos(1/10))),
+                    a(5, 5, 0, 1, 0, -2, 0),
+                    V(15)
+                ) +
+                clockwise_circle(3, 16, 7) +
+                clockwise_circle(3, 7, 25) +
+                clockwise_circle(3, 25, 25) +
+                (Z,)
+            )
         )
     )
-    print(etree.tostring(s._etree))
+    # s = Svg(
+    #     Path(
+    #         d=(
+    #             M(5, 80),
+    #             h(130),
+    #             m(-65, 0),
+    #             v(-60),
+    #             m(-40, 50),
+    #             v(60),
+    #             m(80, -60),
+    #             v(60)
+    #         )
+    #     ),
+    # )
+    tree = etree.ElementTree(s._etree)
+    with open('foo.svg', 'wb') as f:
+        tree.write(
+            f, pretty_print=True, xml_declaration=True, encoding='utf-8')
