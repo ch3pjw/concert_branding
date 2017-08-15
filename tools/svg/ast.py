@@ -97,6 +97,10 @@ class Use(Element):
     pass
 
 
+def _str_number(n):
+    return '{:f}'.format(n).rstrip('0').rstrip('.')
+
+
 def _str_ins(ins):
     if ins is z:
         return 'Z'
@@ -104,7 +108,7 @@ def _str_ins(ins):
         d = ins.__dict__
         rel = d.pop('rel')
         letter = ins.letter.lower() if rel else ins.letter.upper()
-        args = ' '.join(map(str, map(int, d.values())))
+        args = ' '.join(map(str, map(_str_number, d.values())))
         return '{} {}'.format(letter, args)
 
 
