@@ -10,42 +10,49 @@ def segment_height(chord_width, radius):
         radius ** 2 - (chord_width / 2) ** 2)
 
 
+def icon_path(base_width=6, inner_r=None):
+    if inner_r is None:
+        inner_r = base_width / 2
+    w = base_width / 2
+    R = 9
+    r = inner_r
+    sh = segment_height(w, R)
+    return Path(
+        d=(
+            clockwise_square(64) +
+            (
+                M(8, 32 - w),
+                V(32 + w),
+                H(18 - w),
+                V(40),
+                a(R, R, 0, 1, 0, base_width, 0),
+                V(32 + w),
+                H(46 - w),
+                V(40),
+                a(R, R, 0, 1, 0, base_width, 0),
+                V(32 + w),
+                H(56),
+                V(32 - w),
+                H(32 + w),
+                V(24),
+                a(R, R, 0, 1, 0, -base_width, 0),
+                V(32 - w),
+                H(8)
+            ) +
+            clockwise_circle(r, 18, 49 - sh) +
+            clockwise_circle(r, 46, 49 - sh) +
+            clockwise_circle(r, 32, 24 - R + sh) +
+            (Z,)
+        )
+    )
+
+
 if __name__ == '__main__':
     w = 6
     big_r = 9
     little_r = 3
     sh = segment_height(w, big_r)
-    s = Svg(
-        Path(
-            d=(
-                clockwise_square(64) +
-                (
-                    M(8, 29),
-                    V(35),
-                    H(15),
-                    V(40),
-                    a(big_r, big_r, 0, 1, 0, 6, 0),
-                    V(35),
-                    H(43),
-                    V(40),
-                    a(big_r, big_r, 0, 1, 0, 6, 0),
-                    V(35),
-                    H(56),
-                    V(29),
-                    H(35),
-                    V(24),
-                    a(big_r, big_r, 0, 1, 0, -6, 0),
-                    V(29),
-                    H(8)
-                ) +
-                clockwise_circle(little_r, 18, 49 - sh) +
-                clockwise_circle(little_r, 46, 49 - sh) +
-                clockwise_circle(little_r, 32, 24 - big_r + sh) +
-                (Z,)
-            )
-        ),
-        viewBox=ViewBox(0, 0, 64, 64)
-    )
+    s = Svg(icon_path(), viewBox=ViewBox(0, 0, 64, 64))
     tree = etree.ElementTree(s._etree)
     with open('foo.svg', 'wb') as f:
         tree.write(
