@@ -1,11 +1,43 @@
+import os
 from lxml import etree
 from math import sqrt
 
-from svg.ast import Svg, Path, G, Circle, M, V, H, a, Z, ViewBox
+from svg.ast import (
+    Svg, Path, G, Circle, Style, Text, M, V, H, a, Z, ViewBox, Kern)
 from svg.shapes import square, circle
 
 
+static_path = '/static'
+
+
+off_black = '#1f141f'
 record_red = '#e82e1d'
+
+text_select_none_css = '''
+    svg text {
+        -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
+    }
+'''
+
+
+def font_css(name, path):
+    return '''@font-face {{
+    font-family: '{name}';
+    src:
+        url({path}) format('woff');
+}}
+    '''.format(name=name, path=path)
+
+
+raleway_regular_css = font_css(
+    'Raleway Concert Regular',
+    os.path.join(static_path, 'raleway-regular-concert.woff'))
+raleway_medium_css = font_css(
+    'Raleway Concert Medium',
+    os.path.join(static_path, 'raleway-medium-concert.woff'))
 
 
 def segment_height(chord_width, radius):
@@ -70,12 +102,18 @@ def brand_icon():
 
 
 if __name__ == '__main__':
-    w = 6
-    big_r = 9
-    little_r = 3
-    sh = segment_height(w, big_r)
-    s = Svg(brand_icon(), viewBox=ViewBox(-5, -5, 74, 74))
+    s = Svg(
+        Style(raleway_medium_css + text_select_none_css),
+        brand_icon(),
+        Text(
+            'Concert',
+            font_family='Raleway Concert Medium',
+            font_size='62px',
+            x=82, y=57.2,
+            dx=Kern(0, 0, 2.5, 4, 5, 3, 5)
+        ),
+        viewBox=ViewBox(-5, -5, 740, 74))
     tree = etree.ElementTree(s._etree)
-    with open('foo.svg', 'wb') as f:
+    with open('../build/foo.svg', 'wb') as f:
         tree.write(
             f, pretty_print=True, xml_declaration=True, encoding='utf-8')

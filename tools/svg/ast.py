@@ -36,8 +36,10 @@ class Element:
         if cls:
             attributes['class'] = cls
         e = etree.Element(
-            self._tag,
-            attrib={k: str(v) for k, v in attributes.items()})
+            self._tag, attrib={
+                k.replace('_', '-'): str(v) for k, v in attributes.items()
+            }
+        )
         last_child_etree_elem = None
         for c in self._children:
             if isinstance(c, str):
@@ -159,3 +161,11 @@ class PathD:
 
 ViewBox = namedtuple('ViewBox', ('ox', 'oy', 'width', 'height'))
 ViewBox.__str__ = lambda vb: ' '.join(map(str, vb))
+
+
+class Kern(tuple):
+    def __new__(cls, *args):
+        return super().__new__(cls, args)
+
+    def __str__(self):
+        return ' '.join(map(_str_number, self))
