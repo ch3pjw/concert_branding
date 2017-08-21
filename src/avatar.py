@@ -1,16 +1,12 @@
-import os
 from lxml import etree
-from math import sqrt
 from random import randint
 
-from svg.ast import (
-    Svg, Path, G, Rect, Circle, Style, Text, M, V, H, a, Z, ViewBox, Kern)
-from svg.shapes import square, circle
+from svg.ast import Svg, Rect
 
 
 def random_colour():
     return 'rgb({r}, {g}, {b})'.format(
-        r=randint(0, 255), g=randint(0,255), b=randint(0, 255)
+        r=randint(0, 255), g=randint(0, 255), b=randint(0, 255)
     )
 
 
@@ -25,6 +21,7 @@ def make_grid(x, y, size, divisions):
                 height=grid_square_size,
                 fill=random_colour()
             )
+
 
 if __name__ == '__main__':
     s = Svg(
