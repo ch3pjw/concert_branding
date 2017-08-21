@@ -3,7 +3,7 @@ from random import randint
 from hashlib import sha1
 from collections import namedtuple
 
-from svg.ast import Svg, Rect, G
+from svg.ast import Svg, Rect, G, ViewBox
 
 Colour = namedtuple('Colour', ('r', 'g', 'b'))
 Colour.__str__ = lambda c: 'rgb({}, {}, {})'.format(*c)
@@ -53,7 +53,7 @@ def make_grid_rects(size, divisions, c1, c2, c3, c4):
             )
 
 
-def make_grid(x, y, size, string):
+def make_grid(size, string):
     return G(
         *make_grid_rects(
             size,
@@ -62,13 +62,14 @@ def make_grid(x, y, size, string):
             random_colour(),
             random_colour(),
             random_colour()
-        ),
-        transform='translate({x}, {y})'.format(x=x, y=y)
+        )
     )
 
 
 if __name__ == '__main__':
-    s = Svg(make_grid(30, 44, 100, b'paul@ruthorn.co.uk'))
+    s = Svg(
+        make_grid(60, b'paul@ruthorn.co.uk'),
+        viewBox=ViewBox(0, 0, 60, 60))
     tree = etree.ElementTree(s._etree)
     with open('../build/foo.svg', 'wb') as f:
         tree.write(
