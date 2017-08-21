@@ -1,5 +1,6 @@
 from lxml import etree
 from random import randint
+from hashlib import sha1
 
 from svg.ast import Svg, Rect, G
 
@@ -8,6 +9,10 @@ def random_colour():
     return 'rgb({r}, {g}, {b})'.format(
         r=randint(0, 255), g=randint(0, 255), b=randint(0, 255)
     )
+
+
+def hash_to_int(n, string):
+    return int(sha1(string).hexdigest(), base=16) % n
 
 
 def make_grid_rects(size, divisions):
@@ -23,15 +28,15 @@ def make_grid_rects(size, divisions):
             )
 
 
-def make_grid(x, y, size, divisions):
+def make_grid(x, y, size, string):
     return G(
-        *make_grid_rects(size, divisions),
+        *make_grid_rects(size, hash_to_int(3, string) + 3),
         transform='translate({x}, {y})'.format(x=x, y=y)
     )
 
 
 if __name__ == '__main__':
-    s = Svg(make_grid(30, 44, 100, 5))
+    s = Svg(make_grid(30, 44, 100, b'emma'))
     tree = etree.ElementTree(s._etree)
     with open('../build/foo.svg', 'wb') as f:
         tree.write(
