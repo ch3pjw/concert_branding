@@ -1,14 +1,16 @@
 from lxml import etree
 from random import randint
 from hashlib import sha1
+from collections import namedtuple
 
 from svg.ast import Svg, Rect, G
 
+Colour = namedtuple('Colour', ('r', 'g', 'b'))
+Colour.__str__ = lambda c: 'rgb({}, {}, {})'.format(*c)
+
 
 def random_colour():
-    return 'rgb({r}, {g}, {b})'.format(
-        r=randint(0, 255), g=randint(0, 255), b=randint(0, 255)
-    )
+    return Colour(randint(0, 255), randint(0, 255), randint(0, 255))
 
 
 def hash_to_int(n, string):
