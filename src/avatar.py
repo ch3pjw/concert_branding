@@ -2,19 +2,136 @@ from lxml import etree
 from random import randint
 from hashlib import sha1
 from collections import namedtuple
+import colorsys
 
 from svg.ast import Svg, Rect, G, ViewBox
 
-Colour = namedtuple('Colour', ('r', 'g', 'b'))
-Colour.__str__ = lambda c: 'rgb({}, {}, {})'.format(*c)
+
+RgbColour = namedtuple('RgbColour', ('r', 'g', 'b'))
+RgbColour.__str__ = lambda c: 'rgb({}, {}, {})'.format(*c)
+
+HsvColour = namedtuple('HsvColour', ('h', 's', 'v'))
 
 
 def random_colour():
-    return Colour(randint(0, 255), randint(0, 255), randint(0, 255))
+    return RgbColour(randint(0, 255), randint(0, 255), randint(0, 255))
 
 
-def hash_to_int(n, string):
-    return int(sha1(string).hexdigest(), base=16) % n
+def to256(fl):
+    return int(255 * fl / 1.0)
+
+
+def from256(i):
+    return i / 255
+
+
+def rgb_to_hsv(rgb_colour):
+    return HsvColour(
+        *map(
+            to256, colorsys.rgb_to_hsv(
+                *map(
+                    from256, rgb_colour))))
+
+
+def hsv_to_rgb(hsl_colour):
+    return RgbColour(
+        *map(
+            to256, colorsys.hsv_to_rgb(
+                *map(
+                    from256, hsl_colour))))
+
+
+def clamp256(i):
+    return sorted((0, i, 256))[1]
+
+
+def rotate(l, n):
+    n = n % len(l)
+    return l[n:] + l[:n]
+
+
+def lookup_mod(l, n):
+    print('lookup_mod', len(l), n, n % len(l))
+    return l[n % len(l)]
+
+
+def generate_tetradic_colours(seed):
+    h1 = seed % 256
+    h3 = (h1 + 128) % 256
+    h2 = (h1 + 30) % 256
+    h4 = (h2 + 128) % 256
+    saturation = 256
+    value = 200
+    return (
+        HsvColour(h1, saturation, value),
+        HsvColour(h2, saturation, value),
+        HsvColour(h3, saturation, value),
+        HsvColour(h4, saturation, value)
+    )
+
+
+def generate_monochromatic_colours(seed):
+    hue = seed % 256
+    saturation = 128
+    value = 128
+    spread = 128
+    d = spread / 4
+    return (
+        HsvColour(hue, saturation, clamp256(value + 2 * d)),
+        HsvColour(hue, saturation, clamp256(value + d)),
+        HsvColour(hue, saturation, clamp256(value - 2 * d)),
+        HsvColour(hue, saturation, clamp256(value - d))
+    )
+
+
+def generate_analagous_colours(seed):
+    h1 = seed % 256
+    h2 = (h1 + 10) % 256
+    h3 = (h2 + 10) % 256
+    h4 = (h3 + 10) % 256
+    saturation = 256
+    value = 200
+    return (
+        HsvColour(h1, saturation, value),
+        HsvColour(h2, saturation, value),
+        HsvColour(h3, saturation, value),
+        HsvColour(h4, saturation, value)
+    )
+
+
+def generate_split_complimentary_colours(seed):
+    h1 = seed % 256
+    h3 = (h1 + 128) % 256
+    h2 = (h3 + 30) % 256
+    h4 = (h3 - 30) % 256
+    saturation = 256
+    value = 200
+    return (
+        HsvColour(h1, saturation, value),
+        HsvColour(h2, saturation, value),
+        HsvColour(h3, saturation, value),
+        HsvColour(h4, saturation, value)
+    )
+
+
+def generate_related_colours(seed):
+    fs = (
+        generate_monochromatic_colours,
+        generate_analagous_colours,
+        generate_split_complimentary_colours,
+        generate_tetradic_colours
+    )
+    return rotate(
+        tuple(map(
+            hsv_to_rgb,
+            lookup_mod(fs, seed)(seed)
+        )),
+        seed
+    )
+
+
+def hash_to_int(string):
+    return int(sha1(string).hexdigest(), base=16)
 
 
 def bilinearly_interpolate(a, b, c, d, x, y):
@@ -22,7 +139,7 @@ def bilinearly_interpolate(a, b, c, d, x, y):
     a ---- b
     |      |
     |      |
-    c ---- d
+    d ---- c
     '''
     return (
         a * (1 - x) * (1 - y) +
@@ -42,7 +159,7 @@ def make_grid_rects(size, divisions, c1, c2, c3, c4):
                 y=grid_square_size * v,
                 width=grid_square_size,
                 height=grid_square_size,
-                fill=Colour(
+                fill=RgbColour(
                     r=bilinearly_interpolate(
                         c1.r, c2.r, c3.r, c4.r, x_frac, y_frac),
                     g=bilinearly_interpolate(
@@ -53,22 +170,22 @@ def make_grid_rects(size, divisions, c1, c2, c3, c4):
             )
 
 
-def make_grid(size, string):
+def make_grid(size, seed):
+    c1, c2, c3, c4 = generate_related_colours(seed)
     return G(
         *make_grid_rects(
             size,
-            hash_to_int(2, string) + 3,
-            random_colour(),
-            random_colour(),
-            random_colour(),
-            random_colour()
+            seed % 2 + 3,
+            c1, c2, c3, c4
         )
     )
 
 
 if __name__ == '__main__':
+    seed = hash_to_int(b'paul@concertdaw.co.uk')
+    seed = randint(0, 256)
     s = Svg(
-        make_grid(60, b'paul@ruthorn.co.uk'),
+        make_grid(60, seed),
         viewBox=ViewBox(0, 0, 60, 60))
     tree = etree.ElementTree(s._etree)
     with open('../build/foo.svg', 'wb') as f:
