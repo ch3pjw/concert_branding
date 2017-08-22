@@ -1,6 +1,7 @@
 from lxml import etree
 from random import randint
 from hashlib import sha1
+from itertools import cycle
 from collections import namedtuple
 import colorsys
 
@@ -55,8 +56,10 @@ def lookup_mod(l, n):
     return l[n % len(l)]
 
 
-def generate_tetradic_colours(seed):
-    h1 = seed % 256
+def generate_tetradic_colours(hashes):
+    print('tetradic')
+    h1 = next(hashes) % 256
+    print('hue:', h1)
     h3 = (h1 + 128) % 256
     h2 = (h1 + 30) % 256
     h4 = (h2 + 128) % 256
@@ -70,8 +73,10 @@ def generate_tetradic_colours(seed):
     )
 
 
-def generate_monochromatic_colours(seed):
-    hue = seed % 256
+def generate_monochromatic_colours(hashes):
+    print('mono')
+    hue = next(hashes) % 256
+    print('hue:', hue)
     saturation = 128
     value = 128
     spread = 128
@@ -99,11 +104,13 @@ def generate_analagous_colours(seed):
     )
 
 
-def generate_split_complimentary_colours(seed):
-    h1 = seed % 256
-    h3 = (h1 + 128) % 256
-    h2 = (h3 + 30) % 256
-    h4 = (h3 - 30) % 256
+def generate_analagous_colours(hashes):
+    print('analogue')
+    h1 = next(hashes) % 256
+    print('hue:', h1)
+    h2 = (h1 + 30) % 256
+    h3 = (h2 + 30) % 256
+    h4 = (h3 + 30) % 256
     saturation = 256
     value = 200
     return (
@@ -114,7 +121,7 @@ def generate_split_complimentary_colours(seed):
     )
 
 
-def generate_related_colours(seed):
+def generate_related_colours(hashes):
     fs = (
         generate_monochromatic_colours,
         generate_analagous_colours,
@@ -124,14 +131,10 @@ def generate_related_colours(seed):
     return rotate(
         tuple(map(
             hsv_to_rgb,
-            lookup_mod(fs, seed)(seed)
+            lookup_mod(fs, next(hashes))(hashes)
         )),
-        seed
+        next(hashes)
     )
-
-
-def hash_to_int(string):
-    return int(sha1(string).hexdigest(), base=16)
 
 
 def bilinearly_interpolate(a, b, c, d, x, y):
@@ -170,22 +173,32 @@ def make_grid_rects(size, divisions, c1, c2, c3, c4):
             )
 
 
-def make_grid(size, seed):
-    c1, c2, c3, c4 = generate_related_colours(seed)
+def chunks(i, chunk_size):
+    return zip(*([iter(i)] * chunk_size))
+
+
+def make_grid(size, seed_str):
+    hashes = cycle(map(
+        lambda c: int(''.join(c), base=16),
+        chunks(
+            sha1(seed_str).hexdigest(),
+            4
+        )
+    ))
+    c1, c2, c3, c4 = generate_related_colours(hashes)
     return G(
         *make_grid_rects(
             size,
-            seed % 2 + 3,
+            next(hashes) % 2 + 3,
             c1, c2, c3, c4
         )
     )
 
 
 if __name__ == '__main__':
-    seed = hash_to_int(b'paul@concertdaw.co.uk')
-    seed = randint(0, 256)
+    seed_str = bytes(randint(0, 255) for _ in range(10))
     s = Svg(
-        make_grid(60, seed),
+        make_grid(60, seed_str),
         viewBox=ViewBox(0, 0, 60, 60))
     tree = etree.ElementTree(s._etree)
     with open('../build/foo.svg', 'wb') as f:
