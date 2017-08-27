@@ -2,9 +2,9 @@ import os
 from lxml import etree
 from math import sqrt
 
-from svg.ast import (
-    Svg, Path, G, Circle, Style, Text, M, V, H, a, Z, ViewBox, Kern)
-from svg.shapes import square, circle
+from svgast import (
+    Svg, Path, G, Circle, Style, Text, M, V, H, a, Z)
+from svgast.shapes import square, circle
 
 
 static_path = '/static'
@@ -102,8 +102,16 @@ def brand_icon():
     )
 
 
-if __name__ == '__main__':
-    s = Svg(
+def favicon_svg():
+    return Svg(favicon(), viewBox=(0, 0, 64, 64))
+
+
+def brand_icon_svg():
+    return Svg(brand_icon(), viewBox=(-5, -5, 74, 74))
+
+
+def logo_and_text_svg():
+    return Svg(
         Style(raleway_medium_css + text_select_none_css),
         brand_icon(),
         Text(
@@ -111,10 +119,26 @@ if __name__ == '__main__':
             font_family='Raleway Concert Medium',
             font_size='62px',
             x=82, y=57.2,
-            dx=Kern(0, 0, 2.5, 4, 5, 3, 5)
+            dx=(0, 0, 2.5, 4, 5, 3, 5)
         ),
-        viewBox=ViewBox(-5, -5, 740, 74))
-    tree = etree.ElementTree(s._etree)
-    with open('../build/foo.svg', 'wb') as f:
-        tree.write(
-            f, pretty_print=True, xml_declaration=True, encoding='utf-8')
+        viewBox=(-5, -5, 740, 74)
+    )
+
+
+def main(
+        dest_dir: 'The directory to which to write output files'):
+    svgs = {
+        'favicon': favicon_svg(),
+        'brand_icon': brand_icon_svg(),
+        'logo_and_text': logo_and_text_svg()
+    }
+    for name, svg in svgs.items():
+        tree = etree.ElementTree(svg._etree)
+        with open(os.path.join(dest_dir, name + '.svg'), 'wb') as f:
+            tree.write(
+                f, pretty_print=True, xml_declaration=True, encoding='utf-8')
+
+
+if __name__ == '__main__':
+    import argh
+    argh.dispatch_command(main)
