@@ -52,6 +52,7 @@ def icon_data(base_width=6, inner_r=None, negative=False):
     R = 9
     r = inner_r
     sh = segment_height(w, R)
+    # FIXME: these circles look vertically off... :-/
     c1x, c1y = 18, 49 - sh
     c2x, c2y = 46, 49 - sh
     c3x, c3y = 32, 24 - R + sh
