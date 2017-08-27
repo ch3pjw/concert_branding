@@ -198,8 +198,9 @@ def make_grid(size, seed_str):
 if __name__ == '__main__':
     seed_str = bytes(randint(0, 255) for _ in range(10))
     s = Svg(
-        make_grid(60, seed_str),
-        viewBox=ViewBox(0, 0, 60, 60))
+        make_grid(48, seed_str),
+        witdh=48, height=48,
+        viewBox=ViewBox(0, 0, 48, 48))
     tree = etree.ElementTree(s._etree)
     with open('../build/foo.svg', 'wb') as f:
         tree.write(
