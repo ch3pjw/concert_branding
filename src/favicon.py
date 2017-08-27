@@ -85,7 +85,7 @@ def icon_data(base_width=6, inner_r=None, negative=False):
 
 def favicon():
     icon_path, *_ = icon_data(negative=True)
-    return Path(d=square(64) + icon_path(negative=True))
+    return Path(d=square(64, anticlockwise=True) + icon_path)
 
 
 def brand_icon():
