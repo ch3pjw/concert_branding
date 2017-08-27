@@ -89,7 +89,7 @@ def favicon():
     return Path(d=square(64, anticlockwise=True) + icon_path)
 
 
-def brand_icon():
+def logo():
     inner_r = 4
     icon_path, (c1x, c1y), (c2x, c2y), (c3x, c3y) = icon_data(
         base_width=5, inner_r=inner_r)
@@ -106,14 +106,14 @@ def favicon_svg():
     return Svg(favicon(), viewBox=(0, 0, 64, 64))
 
 
-def brand_icon_svg():
-    return Svg(brand_icon(), viewBox=(-5, -5, 74, 74))
+def logo_svg():
+    return Svg(logo(), viewBox=(-5, -5, 74, 74))
 
 
 def logo_and_text_svg():
     return Svg(
         Style(raleway_medium_css + text_select_none_css),
-        brand_icon(),
+        logo(),
         Text(
             'Concert',
             font_family='Raleway Concert Medium',
@@ -129,7 +129,7 @@ def main(
         dest_dir: 'The directory to which to write output files'):
     svgs = {
         'favicon': favicon_svg(),
-        'brand_icon': brand_icon_svg(),
+        'logo': logo_svg(),
         'logo_and_text': logo_and_text_svg()
     }
     for name, svg in svgs.items():
