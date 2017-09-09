@@ -11,8 +11,10 @@ setup(
     author_email='paul@concertdaw.co.uk',
     version='0.0.0',
     license='',
-    install_requires=[],
+    install_requires=[
+        'svgast==0.0.0'
+    ],
     dependency_links=[
-        'http://github.com/concert/svgast/tarball/master#egg=svgast-0.0'
+        'https://github.com/concert/svgast/archive/master.zip#egg=svgast-0.0.0'
     ]
 )
