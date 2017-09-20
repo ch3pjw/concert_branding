@@ -34,12 +34,12 @@ def font_css(name, path, weight, style='normal'):
 
 
 raleway_regular_css = font_css(
-    'Raleway Concert',
+    'Raleway',
     os.path.join(static_path, 'raleway-regular-concert.woff'),
     weight=400
     )
 raleway_medium_css = font_css(
-    'Raleway Concert',
+    'Raleway',
     os.path.join(static_path, 'raleway-medium-concert.woff'),
     weight=500)
 
@@ -120,7 +120,7 @@ def logo_and_text_svg():
         logo(),
         Text(
             'Concert',
-            font_family='Raleway Concert',
+            font_family='Raleway',
             font_weight=500,
             font_size='62px',
             x=82, y=57.2,
