@@ -17,5 +17,8 @@ setup(
     ],
     dependency_links=[
         'https://github.com/concert/svgast/archive/master.zip#egg=svgast-0.0.0'
-    ]
+    ],
+    extras_require={
+        'test': ['flake8']
+    }
 )
