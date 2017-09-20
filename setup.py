@@ -12,7 +12,8 @@ setup(
     version='0.0.0',
     license='',
     install_requires=[
-        'svgast==0.0.0'
+        'svgast==0.0.0',
+        'argh'
     ],
     dependency_links=[
         'https://github.com/concert/svgast/archive/master.zip#egg=svgast-0.0.0'

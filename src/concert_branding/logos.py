@@ -1,9 +1,8 @@
 import os
-from lxml import etree
 from math import sqrt
 
 from svgast import (
-    Svg, Path, G, Circle, Style, Text, M, V, H, a, Z)
+    Svg, Path, G, Circle, Style, Text, M, V, H, a, Z, write)
 from svgast.shapes import square, circle
 
 
@@ -23,21 +22,26 @@ text_select_none_css = '''
 '''
 
 
-def font_css(name, path):
+def font_css(name, path, weight, style='normal'):
     return '''@font-face {{
     font-family: '{name}';
+    font-style: {style};
+    font-weight: {weight};
     src:
         url({path}) format('woff');
 }}
-    '''.format(name=name, path=path)
+    '''.format(name=name, path=path, style=style, weight=weight)
 
 
 raleway_regular_css = font_css(
-    'Raleway Concert Regular',
-    os.path.join(static_path, 'raleway-regular-concert.woff'))
+    'Raleway',
+    os.path.join(static_path, 'raleway-regular-concert.woff'),
+    weight=400
+    )
 raleway_medium_css = font_css(
-    'Raleway Concert Medium',
-    os.path.join(static_path, 'raleway-medium-concert.woff'))
+    'Raleway',
+    os.path.join(static_path, 'raleway-medium-concert.woff'),
+    weight=500)
 
 
 def segment_height(chord_width, radius):
@@ -116,12 +120,13 @@ def logo_and_text_svg():
         logo(),
         Text(
             'Concert',
-            font_family='Raleway Concert Medium',
+            font_family='Raleway',
+            font_weight=500,
             font_size='62px',
             x=82, y=57.2,
             dx=(0, 0, 2.5, 4, 5, 3, 5)
         ),
-        viewBox=(-5, -5, 740, 74)
+        viewBox=(-5, -5, 320, 74)
     )
 
 
@@ -133,10 +138,8 @@ def main(
         'logo_and_text': logo_and_text_svg()
     }
     for name, svg in svgs.items():
-        tree = etree.ElementTree(svg._etree)
         with open(os.path.join(dest_dir, name + '.svg'), 'wb') as f:
-            tree.write(
-                f, pretty_print=True, xml_declaration=True, encoding='utf-8')
+            write(svg, f)
 
 
 if __name__ == '__main__':
