@@ -116,6 +116,7 @@ def logo_svg():
 
 def logo_and_text_svg():
     return Svg(
+        # FIXME: this style makes it hard to include the SVG inline...
         Style(raleway_medium_css + text_select_none_css),
         logo(),
         Text(
