@@ -1,9 +1,8 @@
 import os
-from lxml import etree
 from math import sqrt
 
 from svgast import (
-    Svg, Path, G, Circle, Style, Text, M, V, H, a, Z)
+    Svg, Path, G, Circle, Style, Text, M, V, H, a, Z, write)
 from svgast.shapes import square, circle
 
 
@@ -133,10 +132,8 @@ def main(
         'logo_and_text': logo_and_text_svg()
     }
     for name, svg in svgs.items():
-        tree = etree.ElementTree(svg._etree)
         with open(os.path.join(dest_dir, name + '.svg'), 'wb') as f:
-            tree.write(
-                f, pretty_print=True, xml_declaration=True, encoding='utf-8')
+            write(svg, f)
 
 
 if __name__ == '__main__':
