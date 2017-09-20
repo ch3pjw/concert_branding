@@ -124,7 +124,7 @@ def logo_and_text_svg():
             font_weight=500,
             font_size=px(62),
             x=82, y=57.2,
-            dx=(0, 0, 2.5, 4, 5, 3, 5)
+            dx=(0, 2, 2, 3.25, 4.25, 3, 5)
         ),
         viewBox=(-5, -5, 340, 74)
     )
