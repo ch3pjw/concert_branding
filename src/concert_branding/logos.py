@@ -2,7 +2,7 @@ import os
 from math import sqrt
 
 from svgast import (
-    Svg, Path, G, Circle, Style, Text, M, V, H, a, Z, write)
+    Svg, Path, G, Circle, Style, Text, M, V, H, a, Z, write, px)
 from svgast.shapes import square, circle
 
 
@@ -116,17 +116,18 @@ def logo_svg():
 
 def logo_and_text_svg():
     return Svg(
+        # FIXME: this style makes it hard to include the SVG inline...
         Style(raleway_medium_css + text_select_none_css),
         logo(),
         Text(
             'Concert',
             font_family='Raleway',
             font_weight=500,
-            font_size='62px',
+            font_size=px(62),
             x=82, y=57.2,
-            dx=(0, 0, 2.5, 4, 5, 3, 5)
+            dx=(0, 2, 2, 3.25, 4.25, 3, 5)
         ),
-        viewBox=(-5, -5, 320, 74)
+        viewBox=(-5, -5, 340, 74)
     )
 
 
