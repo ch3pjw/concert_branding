@@ -115,12 +115,13 @@ def logo():
     return SvgFragment(
         view_box=(-5, -5, 74, 74),
         elements=(
-        Circle(cx=c1x, cy=c1y, r=inner_r + 0.1, fill=record_red),
-        Circle(cx=c2x, cy=c2y, r=inner_r + 0.1, fill=record_red),
-        Circle(cx=c3x, cy=c3y, r=inner_r + 0.1, fill=record_red),
-        Path(d=icon_path),
-        Path(d=square(74, -5, -5) + square(64, anticlockwise=True))
-    ))
+            Circle(cx=c1x, cy=c1y, r=inner_r + 0.1, fill=record_red),
+            Circle(cx=c2x, cy=c2y, r=inner_r + 0.1, fill=record_red),
+            Circle(cx=c3x, cy=c3y, r=inner_r + 0.1, fill=record_red),
+            Path(d=icon_path),
+            Path(d=square(74, -5, -5) + square(64, anticlockwise=True))
+        )
+    )
 
 
 def logo_and_text():
