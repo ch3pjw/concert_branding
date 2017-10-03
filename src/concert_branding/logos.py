@@ -3,7 +3,20 @@ from math import sqrt
 
 from svgast import (
     Svg, Path, G, Circle, Style, Text, M, V, H, a, Z, write, px)
+from svgast.ast import ViewBox
 from svgast.shapes import square, circle
+
+
+class SvgFragment:
+    def __init__(self, view_box, elements=(), style_directives=()):
+        self.elements = tuple(elements)
+        self.view_box = ViewBox(*view_box)
+        self.style_directives = frozenset(style_directives)
+
+    @property
+    def svg_ast_node(self):
+        elements = (Style(*self.style_directives),) + self.elements
+        return Svg(*elements, viewBox=self.view_box)
 
 
 static_path = '/static'
@@ -90,53 +103,49 @@ def icon_data(base_width=6, inner_r=None, negative=False):
 
 def favicon():
     icon_path, *_ = icon_data(negative=True)
-    return Path(d=square(64, anticlockwise=True) + icon_path)
+    return SvgFragment(
+        (0, 0, 64, 64),
+        [Path(d=square(64, anticlockwise=True) + icon_path)])
 
 
 def logo():
     inner_r = 4
     icon_path, (c1x, c1y), (c2x, c2y), (c3x, c3y) = icon_data(
         base_width=5, inner_r=inner_r)
-    return G(
+    return SvgFragment(
+        view_box=(-5, -5, 74, 74),
+        elements=(
         Circle(cx=c1x, cy=c1y, r=inner_r + 0.1, fill=record_red),
         Circle(cx=c2x, cy=c2y, r=inner_r + 0.1, fill=record_red),
         Circle(cx=c3x, cy=c3y, r=inner_r + 0.1, fill=record_red),
         Path(d=icon_path),
         Path(d=square(74, -5, -5) + square(64, anticlockwise=True))
-    )
+    ))
 
 
-def favicon_svg():
-    return Svg(favicon(), viewBox=(0, 0, 64, 64))
-
-
-def logo_svg():
-    return Svg(logo(), viewBox=(-5, -5, 74, 74))
-
-
-def logo_and_text_svg():
-    return Svg(
-        # FIXME: this style makes it hard to include the SVG inline...
-        Style(raleway_medium_css + text_select_none_css),
-        logo(),
-        Text(
-            'Concert',
-            font_family='Raleway',
-            font_weight=500,
-            font_size=px(62),
-            x=82, y=57.2,
-            dx=(0, 2, 2, 3.25, 4.25, 3, 5)
+def logo_and_text():
+    return SvgFragment(
+        view_box=(-5, -5, 340, 74),
+        elements=logo().elements + (
+            Text(
+                'Concert',
+                font_family='Raleway',
+                font_weight=500,
+                font_size=px(62),
+                x=82, y=57.2,
+                dx=(0, 2, 2, 3.25, 4.25, 3, 5)
+            ),
         ),
-        viewBox=(-5, -5, 340, 74)
+        style_directives=(raleway_medium_css, text_select_none_css),
     )
 
 
 def main(
         dest_dir: 'The directory to which to write output files'):
     svgs = {
-        'favicon': favicon_svg(),
-        'logo': logo_svg(),
-        'logo_and_text': logo_and_text_svg()
+        'favicon': favicon().svg_ast_node,
+        'logo': logo().svg_ast_node,
+        'logo_and_text': logo_and_text().svg_ast_node
     }
     for name, svg in svgs.items():
         with open(os.path.join(dest_dir, name + '.svg'), 'wb') as f:
