@@ -2,7 +2,7 @@ import os
 from math import sqrt
 
 from svgast import (
-    Svg, Path, G, Circle, Style, Text, M, V, H, a, Z, write, px)
+    Svg, Path, Circle, Style, Text, M, V, H, a, Z, write, px)
 from svgast.ast import ViewBox
 from svgast.shapes import square, circle
 
