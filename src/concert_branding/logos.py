@@ -2,7 +2,7 @@ import os
 from math import sqrt
 
 from svgast import (
-    Svg, Path, Circle, Style, Text, M, V, H, a, Z, write, px)
+    Svg, Path, Circle, Rect, Style, Text, M, V, H, a, Z, write, px)
 from svgast.ast import ViewBox
 from svgast.shapes import square, circle
 
@@ -115,6 +115,7 @@ def logo():
     return SvgFragment(
         view_box=(-5, -5, 74, 74),
         elements=(
+            Rect(x=1, y=1, width=69, height=69, fill="white"),
             Circle(cx=c1x, cy=c1y, r=inner_r + 0.1, fill=record_red),
             Circle(cx=c2x, cy=c2y, r=inner_r + 0.1, fill=record_red),
             Circle(cx=c3x, cy=c3y, r=inner_r + 0.1, fill=record_red),
