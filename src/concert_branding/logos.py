@@ -46,11 +46,6 @@ def font_css(name, path, weight, style='normal'):
     '''.format(name=name, path=path, style=style, weight=weight)
 
 
-raleway_regular_css = font_css(
-    'Raleway',
-    os.path.join(static_path, 'raleway-regular-concert.woff'),
-    weight=400
-    )
 raleway_medium_css = font_css(
     'Raleway',
     os.path.join(static_path, 'raleway-medium-concert.woff'),
