@@ -19,9 +19,6 @@ class SvgFragment:
         return Svg(*elements, viewBox=self.view_box)
 
 
-static_path = '/static'
-
-
 off_black = '#1f141f'
 record_red = '#e82e1d'
 
@@ -47,9 +44,7 @@ def font_css(name, path, weight, style='normal'):
 
 
 raleway_medium_css = font_css(
-    'Raleway',
-    os.path.join(static_path, 'raleway-medium-concert.woff'),
-    weight=500)
+    'Raleway', 'raleway-medium-concert.woff', weight=500)
 
 
 def segment_height(chord_width, radius):
