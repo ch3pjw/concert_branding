@@ -21,8 +21,7 @@ deploy:
     secure: vT8y4AmhZf5+RFxkYfVpRufoF6jN50j8ZFSR/C/5jydvKdCsSmqH5VfxL6aOHktMynyjH/jCLF8nUrjfAJDU6YZ6mojX2CdpFfjRcpj/a7xFee+R70gyrAVXrR2QO0BkmEDhi9+1lpUEl+Q6Sh712rlP9sBh7fYd1Q1VIKZ+Y06rA7tCCfHr2VFc3KBp8rUZfyNTxlyyc69l8vS+SoKvKoVDp2Z6UNcFjfHeHFJ+fizWbQtDjVv/TVaheOgglPZuRm0PQw5LhLotDN+4ZouppG9EVKez4kWaCfcEq7sBvnBfAMrBknTTA3S/QRTvDGQwuiV5LzInOxpUrrUwtCcY3PTuh2kauKjE+Iqve9U2lKBMcwdsKXXTBtMUlnXYPXz4XKgKcaDOk53xHV8PViDEpRaqTmwRlE/kpTUd78viqkBQXMrdNU8sVbf+Oro5UXMFsfqd10mfeQnYHfLMuUOSIEIQu81GjokgS3EDVDKQnznptPhnScxfpFnUBOMznUaHbdkQffvKvvI8wt0RDJbAEJ4xzEyiBgpVgWUL+cagd6WfevwmPxXGaDlp7TAnVjJ2cWC6mxULms9vv5bODPIQOIbXoE1kzeXpPizb4Vs76AWiDaACuN3e8xGf8oSdwaYcYV1/qAh6a7LZkKkJMU1FlWkbt3IiScYx1bD5Z7R6xnQ=
   file_glob: true
   file:
-   - build/*
-   - static/raleway-medium-concert.woff
+    build/*
   skip_cleanup: true
   on:
     tags: true
